@@ -38,6 +38,6 @@ class UserController(private val config: Config) {
             res["expires_in"].toString().toLong()
         )
 
-        ctx.respondText(jacksonObjectMapper().writeValueAsString(mapOf("token" to newToken)))
+        ctx.respondText(jacksonObjectMapper().writeValueAsString(mapOf("token" to newToken, "discord_token" to token)))
     }
 }
