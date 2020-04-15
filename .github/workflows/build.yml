@@ -13,7 +13,7 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
         run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWD
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker build -t votebot/discord-login-service . -f Dockerfile
           docker tag votebot/discord-login-service votebot/discord-login-service:latest
           docker tag votebot/discord-login-service votebot/discord-login-service:${GITHUB_SHA::8}
