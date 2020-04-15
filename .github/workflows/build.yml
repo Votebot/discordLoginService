@@ -1,0 +1,35 @@
+name: Build & Publish
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
+
+  docker_build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build Image
+        env:
+          DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWD
+          docker build -t votebot/discord-login-service . -f Dockerfile
+          docker tag votebot/discord-login-service votebot/discord-login-service:latest
+          docker tag votebot/discord-login-service votebot/discord-login-service:${GITHUB_SHA::8}
+      - name: Push Image
+        if: github.ref == 'refs/heads/master'
+        run: docker push votebot/discord-login-service
