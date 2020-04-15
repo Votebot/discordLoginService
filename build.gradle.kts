@@ -41,6 +41,7 @@ dependencies {
     implementation("io.ktor", "ktor-server-core", "1.3.2")
     implementation("io.ktor", "ktor-websockets", "1.3.2")
     implementation("io.ktor", "ktor-jackson", "1.3.2")
+    implementation("io.ktor", "ktor-html-builder", "1.3.2")
     testImplementation("io.ktor", "ktor-server-tests", "1.3.2")
 
     // Core

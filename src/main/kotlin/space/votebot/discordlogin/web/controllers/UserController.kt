@@ -2,10 +2,12 @@ package space.votebot.discordlogin.web.controllers
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.ApplicationCall
+import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.response.respondRedirect
 import io.ktor.response.respondText
+import kotlinx.html.*
 import space.votebot.discordlogin.config.Config
 import space.votebot.discordlogin.core.DiscordAPI
 import space.votebot.discordlogin.domain.services.UserService
@@ -29,7 +31,7 @@ class UserController(private val config: Config) {
             return
         }
         val res = DiscordAPI.exchangeCode(config.clientId, config.clientSecret, config.redirect, code)
-        val token = res!!["token"].toString()
+        val token = res!!["access_token"].toString()
         val user = DiscordAPI.getUser(token)
         val newToken = UserService.createToken(
             user!!["id"].toString(),
@@ -37,7 +39,29 @@ class UserController(private val config: Config) {
             res["refresh_token"].toString(),
             res["expires_in"].toString().toLong()
         )
-
-        ctx.respondText(jacksonObjectMapper().writeValueAsString(mapOf("token" to newToken, "discord_token" to token)))
+        ctx.respondHtml {
+            body {
+                h1 {
+                    +"Redirecting..."
+                }
+                script(type = ScriptType.textJavaScript) {
+                    unsafe {
+                        raw(
+                            """
+                     if (window.opener) {
+                         window.opener.postMessage(${jacksonObjectMapper().writeValueAsString(
+                                mapOf(
+                                    "token" to newToken,
+                                    "discord_token" to token
+                                )
+                            )}, '${config.windowOrigin}');
+                         window.close();
+                       }
+                    """.trimIndent()
+                        )
+                    }
+                }
+            }
+        }
     }
 }

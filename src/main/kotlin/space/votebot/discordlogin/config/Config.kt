@@ -19,6 +19,8 @@ class Config {
     val redirect = dotenv["${PREFIX}REDIRECT"] ?: ""
     val keyPath = dotenv["${PREFIX}FIREBASE_KEY"] ?: "firebase-admin.json"
     val dbUrl = dotenv["${PREFIX}DB_URL"] ?: ""
+    val corsHost = dotenv["${PREFIX}CORS_HOST"] ?: "*"
+    val windowOrigin = dotenv["${PREFIX}WINDOW_HOST"] ?: "*"
 
     companion object {
         private const val PREFIX = "SERVICE_"
