@@ -68,7 +68,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "space.votebot.bot.LauncherKt"
+    mainClassName = "space.votebot.discordlogin.LauncherKt"
 }
 
 
